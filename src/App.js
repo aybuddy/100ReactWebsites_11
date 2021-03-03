@@ -9,11 +9,15 @@ import {
 import './App.css';
 import InfoBox from './InfoBox';
 import Map from './Map';
+import Table from './Table';
+import { sortData } from './util';
+import LineGraph from './LineGraph';
 
 function App() {
   const [countries, setCountries] = useState([]);
   const [country, setCountry] = useState('worldwide');
   const [countryInfo, setCountryInfo] = useState({});
+  const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
     fetch('https://disease.sh/v3/covid-19/all')
@@ -24,7 +28,6 @@ function App() {
   }, []);
 
   useEffect(() => {
-    // async
     const getCountriesData = async () => {
       await fetch('https://disease.sh/v3/covid-19/countries')
         .then((response) => response.json())
@@ -34,6 +37,8 @@ function App() {
             value: country.countryInfo.iso2,
           }));
 
+          const sortedData = sortData(data);
+          setTableData(sortedData);
           setCountries(countries);
         });
     };
@@ -104,7 +109,9 @@ function App() {
         <CardContent>
           <h3>Live Cases by Country</h3>
           {/* table */}
+          <Table countries={tableData} />
           <h3>Worldwide new cases</h3>
+          <LineGraph />
           {/* graph */}
         </CardContent>
       </Card>
